@@ -11,6 +11,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http2.Http2FrameCodecBuilder;
 import io.netty.handler.codec.http2.Http2MultiplexHandler;
 import io.netty.handler.codec.http2.Http2Settings;
+import io.netty.handler.codec.http2.Http2StreamChannel;
 
 public class Http2MultiplexServer {
     public static void main(String[] args) throws Exception {
@@ -32,7 +33,14 @@ public class Http2MultiplexServer {
                                     .initialSettings(Http2Settings.defaultSettings())
                                     .validateHeaders(true); // Optional
                             p.addLast(frameCodecBuilder.build());
-                            p.addLast(new Http2MultiplexHandler(new StreamHandler()));
+                            p.addLast(new Http2MultiplexHandler(
+                                new ChannelInitializer<Http2StreamChannel>() {
+                                    @Override
+                                    protected void initChannel(Http2StreamChannel ch) throws Exception {
+                                        ch.pipeline().addLast(new StreamHandler());
+                                    }
+                                }
+                            ));
                         }
                     });
 

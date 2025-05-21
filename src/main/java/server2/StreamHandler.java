@@ -2,6 +2,7 @@ package server2;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http2.*;
@@ -51,7 +52,7 @@ public class StreamHandler extends ChannelInboundHandlerAdapter {
         System.out.printf("Got %s %s\nBody: %s\n", method, path, bodyString);
 
         // 응답 예시
-        String responseString = bodyString + "!!!";
+        String responseString = bodyString;
         ByteBuf responseContent = ctx.alloc().buffer().writeBytes(responseString.getBytes(StandardCharsets.UTF_8));
 
         Http2Headers responseHeaders = new DefaultHttp2Headers()
@@ -64,7 +65,7 @@ public class StreamHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        body.release(); // clean up
+//        body.release(); // clean up
         super.channelInactive(ctx);
     }
 }
