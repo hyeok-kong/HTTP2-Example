@@ -20,7 +20,8 @@ public class Http2Client {
 
     private static final String PATH = "/test";
     private static final String METHOD = "Post";
-    private static final String JSON_BODY = "{\"test1\":\"hello123\", \"test2\":\"world\"}";
+//    private static final String BODY = "{\"test1\":\"hello123\", \"test2\":\"world\"}";
+    private static final String BODY = "fixedTest!Hello World!";
 
     public static void main(String[] args) throws Exception {
         EventLoopGroup group = new NioEventLoopGroup();
@@ -40,10 +41,11 @@ public class Http2Client {
                     }
                 });
 
+            System.out.println("create bootstrap");
             Channel parent = bootstrap.connect(HOST, PORT).sync().channel();
             System.out.println("h2c connected.");
 
-            int numRequests = 10;  // 병렬 요청 개수
+            int numRequests = 1;  // 병렬 요청 개수
             for (int i = 1; i <= numRequests; i++) {
                 int idx = i;
                 // 스트림 채널 열기
@@ -68,7 +70,7 @@ public class Http2Client {
                     .add("content-type", "application/json");
                 stream.write(new DefaultHttp2HeadersFrame(h2, false));
                 stream.writeAndFlush(new DefaultHttp2DataFrame(
-                    Unpooled.copiedBuffer(JSON_BODY, CharsetUtil.UTF_8), true));
+                    Unpooled.copiedBuffer(BODY, CharsetUtil.UTF_8), true));
 
                 System.out.println("[Stream " + idx + "] Request sent.");
             }
