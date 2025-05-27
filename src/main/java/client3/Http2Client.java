@@ -21,7 +21,14 @@ public class Http2Client {
     private static final String PATH = "/test";
     private static final String METHOD = "Post";
 //    private static final String BODY = "{\"test1\":\"hello123\", \"test2\":\"world\"}";
-    private static final String BODY = "fixedTest!Hello World!";
+//    private static final String BODY = "fixedTest!Hello World!";
+    private static final String BODY =
+        "<?xml version=\"1.0\" encoding=\"EUC-KR\"?>\n"
+            + "<wstxns1:RequestMessage\n"
+            + "    xmlns:wstxns1=\"urn:anylink:http2.test.http2example\">\n"
+            + "    <wstxns1:test1>good</wstxns1:test1>\n"
+            + "    <wstxns1:test2>job</wstxns1:test2>\n"
+            + "</wstxns1:RequestMessage>";
 
     public static void main(String[] args) throws Exception {
         EventLoopGroup group = new NioEventLoopGroup();
@@ -56,7 +63,8 @@ public class Http2Client {
                         // 스트림 전용 핸들러에 콜백 주입
                         ch.pipeline().addLast(new ResponseHandler((headers, body) -> {
                             System.out.println("\n[Stream " + idx + "] Response:");
-                            headers.forEach(h -> System.out.println(h.getKey() + ": " + h.getValue()));
+                            System.out.println("status : " + headers.status());
+//                            headers.forEach(h -> System.out.println(h.getKey() + ": " + h.getValue()));
                             System.out.println("Body: " + (body.isEmpty() ? "[없음]" : body));
                         }));
                     }
@@ -68,6 +76,7 @@ public class Http2Client {
                     .method(METHOD).path(PATH)
                     .scheme("http").authority(HOST + ":" + PORT)
                     .add("content-type", "application/json");
+
                 stream.write(new DefaultHttp2HeadersFrame(h2, false));
                 stream.writeAndFlush(new DefaultHttp2DataFrame(
                     Unpooled.copiedBuffer(BODY, CharsetUtil.UTF_8), true));
