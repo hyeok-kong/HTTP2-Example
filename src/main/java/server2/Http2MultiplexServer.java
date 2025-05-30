@@ -15,7 +15,7 @@ import io.netty.handler.codec.http2.Http2StreamChannel;
 
 public class Http2MultiplexServer {
     public static void main(String[] args) throws Exception {
-        int port = 8443;
+        int port = 8444;
 
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();

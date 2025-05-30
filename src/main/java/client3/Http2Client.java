@@ -18,17 +18,27 @@ public class Http2Client {
 //    private static final String HOST = "127.0.0.1";
 //    private static final int PORT = 8443;
 
-    private static final String PATH = "/test";
+    private static final String PATH1 = "/http2-test";
+    private static final String PATH2 = "/test2";
+    private static final String PATH3 = "/test3";
+
     private static final String METHOD = "Post";
-//    private static final String BODY = "{\"test1\":\"hello123\", \"test2\":\"world\"}";
-//    private static final String BODY = "fixedTest!Hello World!";
-    private static final String BODY =
+
+    private static final String BODY2 =
         "<?xml version=\"1.0\" encoding=\"EUC-KR\"?>\n"
-            + "<wstxns1:RequestMessage\n"
-            + "    xmlns:wstxns1=\"urn:anylink:http2.test.http2example\">\n"
-            + "    <wstxns1:test1>good</wstxns1:test1>\n"
-            + "    <wstxns1:test2>job</wstxns1:test2>\n"
-            + "</wstxns1:RequestMessage>";
+            + "<wstxns1:HTT2_MESSAGE\n"
+            + "    xmlns:wstxns1=\"urn:anylink:HDCard.poc.http2\">\n"
+            + "    <wstxns1:test1>good123</wstxns1:test1>\n"
+            + "    <wstxns1:test2>job456</wstxns1:test2>\n"
+            + "</wstxns1:HTT2_MESSAGE>";
+
+    private static final String BODY1 = "{\"test1\":\"hello123\", \"test2\":\"world\"}";
+    private static final String BODY3 = "fixedTest!Hello World!";
+
+
+    private static final String[] paths = {PATH1, PATH2, /*PATH3*/};
+    private static final String[] bodys = {BODY1, BODY2, /*BODY3*/};
+
 
     public static void main(String[] args) throws Exception {
         EventLoopGroup group = new NioEventLoopGroup();
@@ -73,13 +83,13 @@ public class Http2Client {
 
                 // 요청 헤더/바디 구성
                 Http2Headers h2 = new DefaultHttp2Headers()
-                    .method(METHOD).path(PATH)
+                    .method(METHOD).path(paths[i%2-1])
                     .scheme("http").authority(HOST + ":" + PORT)
                     .add("content-type", "application/json");
 
                 stream.write(new DefaultHttp2HeadersFrame(h2, false));
                 stream.writeAndFlush(new DefaultHttp2DataFrame(
-                    Unpooled.copiedBuffer(BODY, CharsetUtil.UTF_8), true));
+                    Unpooled.copiedBuffer(bodys[i%2-1], CharsetUtil.UTF_8), true));
 
                 System.out.println("[Stream " + idx + "] Request sent.");
             }

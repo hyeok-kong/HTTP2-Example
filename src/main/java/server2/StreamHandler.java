@@ -53,7 +53,9 @@ public class StreamHandler extends ChannelInboundHandlerAdapter {
 
         // 응답 예시
         String responseString = bodyString;
-        ByteBuf responseContent = ctx.alloc().buffer().writeBytes(responseString.getBytes(StandardCharsets.UTF_8));
+//        String responseString = "ERROR";
+        ByteBuf responseContent = ctx.alloc()
+            .buffer().writeBytes(responseString.getBytes(StandardCharsets.UTF_8));
 
         Http2Headers responseHeaders = new DefaultHttp2Headers()
                 .status("200")
